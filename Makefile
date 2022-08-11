@@ -18,7 +18,7 @@ SRC                   := $(GOPATH)/src/github.com/argoproj/argo-workflows
 GREP_LOGS             := ""
 
 # docker image publishing options
-IMAGE_NAMESPACE       ?= quay.io/argoproj
+IMAGE_NAMESPACE       ?= p09187acrdev.azurecr.io/argoproj
 DEV_IMAGE             ?= $(shell [ `uname -s` = Darwin ] && echo true || echo false)
 
 # declares which cluster to import to in case it's not the default name
@@ -410,7 +410,7 @@ install: githooks
 	kubectl get ns $(KUBE_NAMESPACE) || kubectl create ns $(KUBE_NAMESPACE)
 	kubectl config set-context --current --namespace=$(KUBE_NAMESPACE)
 	@echo "installing PROFILE=$(PROFILE), E2E_EXECUTOR=$(E2E_EXECUTOR)"
-	kubectl kustomize --load-restrictor=LoadRestrictionsNone test/e2e/manifests/$(PROFILE) | sed 's|quay.io/argoproj/|$(IMAGE_NAMESPACE)/|' | sed 's/namespace: argo/namespace: $(KUBE_NAMESPACE)/' | kubectl -n $(KUBE_NAMESPACE) apply --prune -l app.kubernetes.io/part-of=argo -f -
+	kubectl kustomize --load-restrictor=LoadRestrictionsNone test/e2e/manifests/$(PROFILE) | sed 's|p09187acrdev.azurecr.io/argoproj/|$(IMAGE_NAMESPACE)/|' | sed 's/namespace: argo/namespace: $(KUBE_NAMESPACE)/' | kubectl -n $(KUBE_NAMESPACE) apply --prune -l app.kubernetes.io/part-of=argo -f -
 ifneq ($(E2E_EXECUTOR),emissary)
 	# only change the executor from the default it we need to
 	kubectl patch cm/workflow-controller-configmap -p "{\"data\": {\"containerRuntimeExecutor\": \"$(E2E_EXECUTOR)\"}}"
